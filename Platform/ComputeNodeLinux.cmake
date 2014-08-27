@@ -37,15 +37,9 @@ else() # Explicit static
   set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
 endif()
 
-# Only warn once about a missing sysroot
-#set(_CRAY_NO_SYSROOT_WARN 1 CACHE INTERNAL "")
-
 # Make sure we have the appropriate environment loaded
 if(NOT DEFINED ENV{SYSROOT_DIR})
-  if(_CRAY_NO_SYSROOT_WARN)
-    #message(WARNING "The SYSROOT_DIR environment variable is not defined.  This is usually due to the appropriate {xe,xt,xc}-sysroot module not being loaded.  A dummy default search path will be used insted, effectively disabling the default search path.")
-    set(_CRAY_NO_SYSROOT_WARN 0 CACHE INTERNAL "" FORCE)
-  endif()
+  #message(WARNING "The SYSROOT_DIR environment variable is not defined.  This is usually due to the appropriate {xe,xt,xc}-sysroot module not being loaded.  A dummy default search path will be used insted, effectively disabling the default search path.")
   set(_CRAY_SYSROOT "/dev/null")
 else()
   set(_CRAY_SYSROOT "$ENV{SYSROOT_DIR}")
@@ -53,14 +47,11 @@ endif()
 
 # Set up system search paths that CMake will use to look for libraries and
 # include files.  These will be the standard UNIX search paths but rooted
-# in the SYSROOT of the computes nodes.
-#
-# There is often some confusion on how to set these.  By setting them to BOTH,
-# The re-rooted paths are searched, plus the fully specified paths.  If they
-# were set to ONLY, then only the re-rooted paths would be searched.
+# in the SYSROOT of the computes nodes.  User specified search paths remain
+# untouched
 include(Platform/UnixPaths)
 set(CMAKE_FIND_ROOT_PATH "${_CRAY_SYSROOT}")
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
-set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY BOTH)
-set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE BOTH)
-set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE BOTH)
+set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY SYSTEM_ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE SYSTEM_ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE SYSTEM_ONLY)
