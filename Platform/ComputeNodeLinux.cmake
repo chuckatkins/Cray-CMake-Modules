@@ -20,6 +20,8 @@ set(CMAKE_STATIC_LIBRARY_SUFFIX ".a")
 
 set(CMAKE_FIND_LIBRARY_PREFIXES "lib")
 
+set(CMAKE_DL_LIBS dl)
+
 # Normally this sort of logic would belong in the toolchain file but the
 # order things get loaded in cause anything set here to override the toolchain
 # so we'll explicitly check for static compiler options in order to specify
@@ -47,7 +49,7 @@ endif()
 
 # Set up system search paths that CMake will use to look for libraries and
 # include files.  These will be the standard UNIX search paths but rooted
-# in the SYSROOT of the computes nodes.  User specified search paths remain
+# in the SYSROOT of the compute nodes.  User specified search paths remain
 # untouched
 include(Platform/UnixPaths)
 set(CMAKE_FIND_ROOT_PATH "${_CRAY_SYSROOT}")

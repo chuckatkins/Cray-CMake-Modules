@@ -23,17 +23,28 @@ set(CMAKE_Fortran_COMPILER "${_CRAYPE_ROOT}/bin/ftn")
 # into the generated build files so even if the environment changes after
 # configure, the correct commands will still get called.
 if(DEFINED ENV{CRAYPE_COMPILE_TARGET})
-  set(_CRAY_TARGET "--target=$ENV{CRAYPE_COMPILE_TARGET}")
+  list(APPEND _CRAYPE_OPTS "-target=$ENV{CRAYPE_COMPILE_TARGET}")
+else()
+  if(DEFINED ENV{CRAY_CPU_TARGET})
+    list(APPEND _CRAYPE_OPTS "-target-cpu=$ENV{CRAY_CPU_TARGET}")
+  endif()
+  if(DEFINED ENV{CRAY_ACCEL_TARGET})
+    list(APPEND _CRAYPE_OPTS "-target-accel=$ENV{CRAY_ACCEL_TARGET}")
+  endif()
+  if(DEFINED ENV{CRAY_NETWORK_TARGET})
+    list(APPEND _CRAYPE_OPTS "-target-network=$ENV{CRAY_NETWORK_TARGET}")
+  endif()
 endif()
 if("$ENV{CRAYPE_LINK_TYPE}" STREQUAL "dynamic")
-  set(_CRAY_LINK "-dynamic")
+  list(APPEND _CRAYPE_OPTS "-dynamic")
 else() # Explicit or implicit static
-  set(_CRAY_LINK "-static")
+  list(APPEND _CRAYPE_OPTS "-static")
 endif()
+string(REPLACE ";" " " _CRAYPE_OPTS "${_CRAYPE_OPTS}")
 
-set(CMAKE_C_FLAGS       "${_CRAY_TARGET} ${_CRAY_LINK}" CACHE STRING "" FORCE)
-set(CMAKE_CXX_FLAGS     "${_CRAY_TARGET} ${_CRAY_LINK}" CACHE STRING "" FORCE)
-set(CMAKE_Fortran_FLAGS "${_CRAY_TARGET} ${_CRAY_LINK}" CACHE STRING "" FORCE)
+set(CMAKE_C_FLAGS       "${_CRAYPE_OPTS}" CACHE STRING "" FORCE)
+set(CMAKE_CXX_FLAGS     "${_CRAYPE_OPTS}" CACHE STRING "" FORCE)
+set(CMAKE_Fortran_FLAGS "${_CRAYPE_OPTS}" CACHE STRING "" FORCE)
 
 # Guide the search for binutils. These can't be auto-detected because of
 # the forced CMAKE_FIND_ROOT_PATH_MODE_* variables so we explicitly tell
