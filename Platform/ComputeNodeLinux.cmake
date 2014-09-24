@@ -50,18 +50,6 @@ endif()
 include(Platform/UnixPaths)
 set(CMAKE_FIND_ROOT_PATH "${_CRAY_SYSROOT}")
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
-if(CMAKE_VERSION VERSION_LESS 3.1)
-  # This mode is definitely not ideal but necessary for older versions of
-  # CMake
-  set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY BOTH)
-  set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE BOTH)
-  set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE BOTH)
-else()
-  # Set up system search paths that CMake will use to look for libraries and
-  # include files.  These will be the standard UNIX search paths but rooted
-  # in the SYSROOT of the compute nodes.  User specified search paths remain
-  # untouched
-  set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY SYSTEM_ONLY)
-  set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE SYSTEM_ONLY)
-  set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE SYSTEM_ONLY)
-endif()
+set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
