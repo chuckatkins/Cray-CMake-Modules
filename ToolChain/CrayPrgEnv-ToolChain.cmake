@@ -4,18 +4,16 @@ if(__CrayPrgEnv)
 endif()
 set(__CrayPrgEnv 1)
 
-# Make sure we can find the ComputeNodeLinux Platform file since it's not
-# shipped with CMake
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/..")
+if(NOT __CrayLinuxEnvironment)
+  message(FATAL_ERROR "The CrayPrgEnv tolchain file must not be used on its own and is intented to be included by the CrayLinuxEnvironment platform file")
+endif()
 
 set(CMAKE_SYSTEM_NAME CrayLinuxEnvironment)
 
 # Make sure we have the appropriate environment loaded
-if(ENV{CRAYPE_DIR})
-  set(CRAYXC TRUE)
+if(DEFINED ENV{CRAYPE_DIR})
   set(_CRAYPE_ROOT "$ENV{CRAYPE_DIR}")
-elseif(ENV{ASYNCPE_DIR})
-  set(CRAYXT TRUE)
+elseif(DEFINED ENV{ASYNCPE_DIR})
   set(_CRAYPE_ROOT "$ENV{ASYNCPE_DIR}")
 else()
   message(FATAL_ERROR "Neither the ASYNCPE_DIR or CRAYPE_DIR environment variable are defined but the CrayPrgEnv toolchain module requires one.  This usually means that the necessary PrgEnv-* module is not loaded")

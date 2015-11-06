@@ -3,16 +3,16 @@
 # modules to set up the right paths for things.
 
 # Guard against multiple inclusions
-if(__CrayLinuxEnviropnment)
+if(__CrayLinuxEnvironment)
   return()
 endif()
-set(__CrayLinuxEnviropnment 1)
+set(__CrayLinuxEnvironment 1)
 
 set(UNIX 1)
 
-if(CRAYXC)
+if(DEFINED ENV{CRAYOS_VERSION})
   set(CMAKE_SYSTEM_VERSION "$ENV{CRAYOS_VERSION}")
-elseif(CRAYXT)
+elseif(DEFINED ENV{XTOS_VERSION})
   set(CMAKE_SYSTEM_VERSION "$ENV{XTOS_VERSION}")
 else()
   message(FATAL_ERROR "Neither the CRAYXC or CRAYXT CMake variables are defined.  Thjis platform file should not be used directly but instead only from the CrayPrgEnv toolchain file")
@@ -75,15 +75,16 @@ list(APPEND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES
   $ENV{SYSROOT_DIR}/usr/local/lib64
   $ENV{SYSROOT_DIR}/usr/lib64
   $ENV{SYSROOT_DIR}/lib64
-  )
-
+)
 list(APPEND CMAKE_C_IMPLICIT_INCLUDE_DIRECTORIES
   $ENV{SYSROOT_DIR}/usr/include
-  )
+)
 list(APPEND CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES
   $ENV{SYSROOT_DIR}/usr/include
-  )
+)
 
 # Enable use of lib64 search path variants by default.
 set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS TRUE)
 
+# Load the appropriate toolchain information
+include(CrayPrgEnv-ToolChain.cmake)
